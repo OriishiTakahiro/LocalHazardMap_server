@@ -4,7 +4,8 @@ class CreateContributions < ActiveRecord::Migration
 			t.integer :user_id, :null => false
 			t.decimal :latitude, :precision => 9, :scale => 6, :nul => false
 			t.decimal :longitude, :precision => 9, :scale => 6, :nul => false
-			t.string :description, :null => false
+			t.string :title, :null => false
+			t.text :description
 			t.binary :img
       t.timestamps null: false
     end
