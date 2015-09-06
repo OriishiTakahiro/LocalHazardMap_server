@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
 
+  resources :disasters
 	get '/user/entry' => 'users#entry'
 	get '/user/getAllUser' => 'users#getAllUser'
 

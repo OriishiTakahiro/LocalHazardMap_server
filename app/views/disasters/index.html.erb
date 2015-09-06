@@ -1,0 +1,29 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Listing Disasters</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Description</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @disasters.each do |disaster| %>
+      <tr>
+        <td><%= disaster.name %></td>
+        <td><%= disaster.description %></td>
+        <td><%= link_to 'Show', disaster %></td>
+        <td><%= link_to 'Edit', edit_disaster_path(disaster) %></td>
+        <td><%= link_to 'Destroy', disaster, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Disaster', new_disaster_path %>
