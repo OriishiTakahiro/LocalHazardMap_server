@@ -1,4 +1,17 @@
+#LocalHazardMap_server
+
+---
+##APIへのリクエストパラメータ形式
+---
+*user
+	+ user/entry => {"name"="user_name", "pw"="user_pw"}
+* layer
+	+ layer/register => {"name"="org_name", "pw"="org_pw", "max_lat"="max_lat", "max_lon"="max_lon", "min_lat"="min_lat", "min_lon"="min_lon"}
+	+ layer/update => {"name"="org_name", "pw"="org_pw", "layer_id"="layer_id", "warnings"="{["disaster_id",{"lat:lon","lat:lon"},{"lat:lon"}],["disaster_id",{"lat:lon"},{"lat:lon"},{"lat:lon"}]...}
+
+---
 ##データベースはMySQLを使用しています。
+---
 * database	: LlocalHazardMap_development
 * user			: procon
 * pw		 		: pass

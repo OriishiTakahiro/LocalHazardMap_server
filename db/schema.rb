@@ -51,6 +51,7 @@ ActiveRecord::Schema.define(version: 20150906082842) do
 
   create_table "organizations", force: :cascade do |t|
     t.string   "name",        limit: 255, null: false
+    t.string   "pw",          limit: 20,  null: false
     t.text     "description", limit: 255, null: false
     t.datetime "created_at",              null: false
     t.datetime "updated_at",              null: false

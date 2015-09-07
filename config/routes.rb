@@ -1,8 +1,12 @@
 Rails.application.routes.draw do
 
   resources :disasters
-	get '/user/entry' => 'users#entry'
+
+	post '/user/entry' => 'users#entry'
 	get '/user/getAllUser' => 'users#getAllUser'
+
+	post '/layer/register' => 'layers#registerNewLayer'
+	post '/layer/update' => 'layers#updateLayer'
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
