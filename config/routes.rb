@@ -1,12 +1,21 @@
 Rails.application.routes.draw do
 
+
   resources :disasters
 
+	get 'disaster/getList' => 'disasters#getList'
+
 	post '/user/entry' => 'users#entry'
-	get '/user/getAllUser' => 'users#getAllUser'
+	get '/user/getList' => 'users#getAllUser'
+
+	post '/location/postLocation' => 'locations#postLocation'
+
+	get '/org/getList' => 'organizations#getOrgList'
 
 	post '/layer/register' => 'layers#registerNewLayer'
 	post '/layer/update' => 'layers#updateLayer'
+	get '/layer/getMap' => 'layers#getMap'
+
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
