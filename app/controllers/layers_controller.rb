@@ -39,9 +39,9 @@ class LayersController < ApplicationController
 				Semiwarning.create(:id => new_warning.id, :max_lat => lat_array.max, :max_lon => lon_array.max, :min_lat => lat_array.min, :min_lon => lon_array.min)
 			end
 			###
-			render :json => [:result => :succeeded!, :layer_id => layer.id, :warnings => Warning.where(:layer_id => layer.id).to_a]
+			render :json => [:result => true, :layer_id => layer.id, :warnings => Warning.where(:layer_id => layer.id).to_a]
 		else
-			render :json => [:result => :failed!]
+			render :json => [:result => false]
 		end
 	end
 
@@ -49,7 +49,6 @@ class LayersController < ApplicationController
 	def getMap
 		# params => request=["org_id", "org_id",...]
 		layers = Layer.where(:org_id => JSON.parse(params[:request], :quirks_mode => true))
-		logger.debug "\n#{Warning.find_by(:id => 1).apexes}\n"
 		warnings = Warning.where(:layer_id => layers.map{|layer| layer.id}).map{|warning| [warning.disaster_id, JSON.parse(warning.apexes, :quirks_mode => true)] if warning}
 		render :json => JSON.generate(warnings)
 	end

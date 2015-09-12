@@ -3,18 +3,18 @@ Rails.application.routes.draw do
 
   resources :disasters
 
-	get 'disaster/getList' => 'disasters#getList'
 
 	post '/user/entry' => 'users#entry'
 	get '/user/getList' => 'users#getAllUser'
 
-	post '/location/postLocation' => 'locations#postLocation'
-
 	get '/org/getList' => 'organizations#getOrgList'
+	get 'disaster/getList' => 'disasters#getList'
 
 	post '/layer/register' => 'layers#registerNewLayer'
 	post '/layer/update' => 'layers#updateLayer'
 	get '/layer/getMap' => 'layers#getMap'
+
+	post '/location/postLocation' => 'locations#postLocation'
 
 
   # The priority is based upon order of creation: first created -> highest priority.

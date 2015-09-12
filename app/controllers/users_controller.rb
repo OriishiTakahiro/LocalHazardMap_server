@@ -5,9 +5,9 @@ class UsersController < ApplicationController
 		new_user.name = params[:name]
 		new_user.pw = params[:pw]
 		if(new_user.save)
-			render :text => 'entry succeeded.'
+			render :json => {:result => true}
 		else
-			render :text => 'entry failed.'
+			render :json => {:result => false}
 		end
 	end
 
