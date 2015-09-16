@@ -1,5 +1,7 @@
 class OrganizationsController < ApplicationController
 	def getOrgList
-		render :json => Organization.all.map{|org| {org.id => org.name}}
+		response = Hash.new()
+		Organization.all.each{|org| response.store(org.id, org.name)}
+		render :json => {:response => response}
 	end
 end

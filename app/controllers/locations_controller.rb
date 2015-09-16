@@ -25,12 +25,12 @@ class LocationsController < ApplicationController
 						i.upto(apexes.length-1) { |j|
 							if((lat_array[i] < user_lat && lat_array[j] > user_lat) || (lat_array[j] < user_lat && lat_array[i] > user_lat))
 								slant = (lat_array[i]-lat_array[j])/(lon_array[i]-lon_array[j])
-								x = slant*lon_array[i]-lat_array[i]-user_lat
-								logger.debug x
+								x = (slant*lon_array[i]-lat_array[i]+user_lat)/slant
+								logger.debug "#{x} : #{slant}"
 								conditions[0] = x < user_lon ? true : conditions[0]
 								conditions[1] = x > user_lon ? true : conditions[1]
 								if(conditions[0]&&conditions[1])
-									result << candidate.id
+									result << candidate.disaster_id
 									break
 								end
 							end
@@ -38,7 +38,12 @@ class LocationsController < ApplicationController
 					}
 				}
 			end
-			render :json => result
+			response = result.uniq.map{|warning_id| 
+				disaster = Disaster.find_by(:id => warning_id)
+				{:name => disaster.name, :description => disaster.description}
+			}
+			logger.debug response
+			render :json => {:response => response}
 		else
 			render :json => {:result => 'failed'}
 		end
