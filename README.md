@@ -18,12 +18,13 @@ path(HTTP_method) => request
 	+ layer/register(post) => name=org_name & pw=org_pw & max_lat=max_lat & max_lon=max_lon & min_lat=min_lat & min_lon=min_lon  
 		// ["result":true_or_false, "id":"registerd_layer_id"]
 	+ layer/update(post) => name=hoge & pw=hoge & layer_id=hoge & warnings=["disaster_id",{"lat:lon","lat:lon"},{"lat:lon"}],["disaster_id",{"lat:lon"},{"lat:lon"},{"lat:lon"}],...]  
-		// ["result":true_or_false, :layer_id => layer.id, :warnings => Warning.where(:layer_id => layer.id).to_a]
+		// ["result":true_or_false, "layer_id":layer.id, "warnings":[id,layer_id,disaster_id,apexes,created_date,updated_date]]
 	+ layer/getMap(get) =>	request=["org_id", "org_id",...]  
-		// [[disaster_id,[{"latitude":longitude},{"latitude":longitude},{"latitude":longitude}, ...]] ...]
+		// {"response":[[disaster_id,[{"latitude":longitude},{"latitude":longitude},{"latitude":longitude}, ...]] ...]}
 *	location
-	+ location/postLocation => id=user_id & pw=user_pw & latitude=users_latitude & longitude=user_longitude  
+	+ location/postLocation(post) => id=user_id & pw=user_pw & latitude=users_latitude & longitude=user_longitude  
 		// {"response":[disaster_id, disaster_id, disaster_id, ...]}
+	+ location/getLocation
  
 ---
 ##データベースはMySQLを使用しています。

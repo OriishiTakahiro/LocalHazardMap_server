@@ -8,6 +8,8 @@ Rails.application.routes.draw do
 	get '/user/getList' => 'users#getAllUser'
 
 	get '/org/getList' => 'organizations#getOrgList'
+	get '/org/register' => 'organizations#registerOrg'
+
 	get 'disaster/getList' => 'disasters#getList'
 
 	post '/layer/register' => 'layers#registerNewLayer'

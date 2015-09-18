@@ -50,7 +50,8 @@ class LayersController < ApplicationController
 		# params => request=["org_id", "org_id",...]
 		layers = Layer.where(:org_id => JSON.parse(params[:request], :quirks_mode => true))
 		warnings = Warning.where(:layer_id => layers.map{|layer| layer.id}).map{|warning| [warning.disaster_id, JSON.parse(warning.apexes, :quirks_mode => true)] if warning}
-		render :json => JSON.generate(warnings)
+		logger.debug warnings
+		render :json => {:response => warnings}
 	end
 
 end

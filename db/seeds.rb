@@ -8,6 +8,7 @@
 #
 
 User.create(:name => "test_user", :pw => "pass")
+Organization.create(:id => 0, :name => "users", :pw => "", :description => "ユーザからの投稿")
 Organization.create(:name => "ANCTcorp", :pw => "pass", :description => "えーえぬしーてぃーかぶしきがいしゃ")
 Organization.create(:name => "aaaa", :pw => "pass", :description => "えーえぬしーてぃーかぶしきがいしゃ")
 Organization.create(:name => "bbbb", :pw => "pass", :description => "えーえぬしーてぃーかぶしきがいしゃ")
