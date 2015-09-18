@@ -12,6 +12,8 @@ Rails.application.routes.draw do
 
 	get 'disaster/getList' => 'disasters#getList'
 
+	post 'contribution/postContribution' => 'contributions#postContribution'
+
 	post '/layer/register' => 'layers#registerNewLayer'
 	post '/layer/update' => 'layers#updateLayer'
 	get '/layer/getMap' => 'layers#getMap'

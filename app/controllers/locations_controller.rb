@@ -9,10 +9,10 @@ class LocationsController < ApplicationController
 			location = Location.find_or_create_by(:user_id => user.id)
 			location.update(:latitude => params[:latitude], :longitude => params[:longitude])
 			# 範囲指定でSemiwarningを取得
-			semi_hit = Semiwarning.where("max_lat > #{params[:latitude]} and  max_lon > #{params[:longitude]} and min_lat < #{params[:latitude]} and min_lon <  #{params[:longitude]}")
+			semi_hit = Semiwarning.where("max_lat > #{params[:latitude]} and max_lon > #{params[:longitude]} and min_lat < #{params[:latitude]} and min_lon <  #{params[:longitude]}")
 			result = Array.new
 			if(!semi_hit.empty?)
-				candidates = Warning.where(:id => semi_hit.map{|semi_warning| semi_warning.id})
+				candidates = Warning.where(:id => semi_hit.map{|semi_warning| semi_warning.id}, :layer_id => JSON.parse(params[:layers]))
 				candidates.map{ |candidate|
 					apexes = JSON.parse(candidate.apexes, :quirks_mode => true)
 					lat_array = apexes.map{|apex| apex.keys.first.to_f}

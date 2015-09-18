@@ -14,6 +14,9 @@ path(HTTP_method) => request
 * disaster
 	+ disaster/getList(get) => none  
 		// [[disaster_id, disaster_name, disaster_description],[disaster_id, disaster_name, disaster_description], ...]
+* contribution
+	+ contribution/postContribution(post) => id=user_id & pw=user_pw & latitude=user_latitude & longitude=user_longitude & title=title & description=description
+		// ["result":"succeeded","id":contribution_id]
 * layer
 	+ layer/register(post) => name=org_name & pw=org_pw & max_lat=max_lat & max_lon=max_lon & min_lat=min_lat & min_lon=min_lon  
 		// ["result":true_or_false, "id":"registerd_layer_id"]
@@ -22,7 +25,7 @@ path(HTTP_method) => request
 	+ layer/getMap(get) =>	request=["org_id", "org_id",...]  
 		// {"response":[[disaster_id,[{"latitude":longitude},{"latitude":longitude},{"latitude":longitude}, ...]] ...]}
 *	location
-	+ location/postLocation(post) => id=user_id & pw=user_pw & latitude=users_latitude & longitude=user_longitude  
+	+ location/postLocation(post) => id=user_id & pw=user_pw & latitude=users_latitude & longitude=user_longitude & layers=[layer_id,layer_id,...]  
 		// {"response":[disaster_id, disaster_id, disaster_id, ...]}
 	+ location/getLocation
  
