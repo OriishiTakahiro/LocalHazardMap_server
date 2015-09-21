@@ -25,7 +25,7 @@ path(HTTP_method) => request
 	+ layer/getMap(get) =>	request=["org_id", "org_id",...]  
 		// {"response":[[disaster_id,[{"latitude":longitude},{"latitude":longitude},{"latitude":longitude}, ...]] ...]}
 *	location
-	+ location/postLocation(post) => id=user_id & pw=user_pw & latitude=users_latitude & longitude=user_longitude & layers=[layer_id,layer_id,...]  
+	+ location/postLocation(post) => id=user_id & pw=user_pw & latitude=users_latitude & longitude=user_longitude & orgs=[org_id,org_id,...]  
 		// {"response":[disaster_id, disaster_id, disaster_id, ...]}
 	+ location/getLocation
  

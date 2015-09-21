@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150912025548) do
+ActiveRecord::Schema.define(version: 20150918173926) do
 
   create_table "contributions", force: :cascade do |t|
     t.integer  "user_id",     limit: 4,                             null: false
@@ -55,6 +55,15 @@ ActiveRecord::Schema.define(version: 20150912025548) do
     t.text     "description", limit: 255, null: false
     t.datetime "created_at",              null: false
     t.datetime "updated_at",              null: false
+  end
+
+  create_table "semicontributions", force: :cascade do |t|
+    t.decimal  "max_lat",    precision: 9, scale: 6, null: false
+    t.decimal  "max_lon",    precision: 9, scale: 6, null: false
+    t.decimal  "min_lat",    precision: 9, scale: 6, null: false
+    t.decimal  "min_lon",    precision: 9, scale: 6, null: false
+    t.datetime "created_at",                         null: false
+    t.datetime "updated_at",                         null: false
   end
 
   create_table "semiwarnigs", force: :cascade do |t|

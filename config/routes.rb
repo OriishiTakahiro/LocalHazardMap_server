@@ -13,6 +13,7 @@ Rails.application.routes.draw do
 	get 'disaster/getList' => 'disasters#getList'
 
 	post 'contribution/postContribution' => 'contributions#postContribution'
+	get 'tmp' => 'contributions#tmp'
 
 	post '/layer/register' => 'layers#registerNewLayer'
 	post '/layer/update' => 'layers#updateLayer'

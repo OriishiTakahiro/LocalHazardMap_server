@@ -48,9 +48,15 @@ class LayersController < ApplicationController
 ### --------------------------------
 	def getMap
 		# params => request=["org_id", "org_id",...]
-		layers = Layer.where(:org_id => JSON.parse(params[:request], :quirks_mode => true))
+		orgs = JSON.parse(params[:request], :quirks_mode => true)
+		layers = Layer.where(:org_id => orgs)
 		warnings = Warning.where(:layer_id => layers.map{|layer| layer.id}).map{|warning| [warning.disaster_id, JSON.parse(warning.apexes, :quirks_mode => true)] if warning}
-		logger.debug warnings
+		if(orgs.include?(1))
+			Contribution.all.each{|cont| warnings << [0, [cont.latitude.to_s => cont.longitude.to_f]]}
+		end
+		warnings.each{ |polygon|
+			logger.debug polygon
+		}
 		render :json => {:response => warnings}
 	end
 

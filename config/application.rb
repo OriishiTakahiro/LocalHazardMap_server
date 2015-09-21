@@ -24,5 +24,14 @@ module LocalHazardMap
     # Do not swallow errors in after_commit/after_rollback callbacks.
     config.active_record.raise_in_transactional_callbacks = true
 		config.web_console.whitelisted_ips = "10.211.55.1"
+		config.web_console.whitelisted_ips = "192.168.0.1"
+		config.web_console.whitelisted_ips = "192.168.0.2"
+		config.web_console.whitelisted_ips = "192.168.0.3"
+		config.web_console.whitelisted_ips = "192.168.0.4"
+		config.web_console.whitelisted_ips = "192.168.0.5"
+		config.web_console.whitelisted_ips = "192.168.0.6"
+		config.web_console.whitelisted_ips = "192.168.0.7"
+		config.web_console.whitelisted_ips = "192.168.0.8"
+		config.web_console.whitelisted_ips = "192.168.0.9"
   end
 end
