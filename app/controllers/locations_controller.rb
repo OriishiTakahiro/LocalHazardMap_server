@@ -2,6 +2,9 @@ require 'json'
 
 class LocationsController < ApplicationController
 
+	A = 6378137.000
+	B = 6356752.314245
+
 	def postLocation
 		# params => id=user_id & pw=user_pw & latitude=user_latitude & longitude=user_longitude
 		user = nil
@@ -46,9 +49,9 @@ class LocationsController < ApplicationController
 			}
 
 			if(orgs.include?(1))
-				#semi_list = Semicontribution.where("max_lat > #{params[:latitude]} and max_lon > #{params[:longitude]} and min_lat < #{params[:latitude]} and min_lon <  #{params[:longitude]}").map{|semi| semi.id}
+				semis = Semicontribution.where("max_lat > #{params[:latitude]} and max_lon > #{params[:longitude]} and min_lat < #{params[:latitude]} and min_lon <  #{params[:longitude]}").map{|semi| semi.id}
 				semi_list = Semicontribution.all.map{|semi| semi.id}
-				logger.debug "semilist#{semi_list}"
+				logger.debug "semilist : #{semis}}"
 				cont_list = Contribution.where(:id => semi_list)
 				cont_list.each { |cont|
 
@@ -56,27 +59,24 @@ class LocationsController < ApplicationController
 					logger.debug "#{cont.latitude} : #{cont.longitude}"
 					logger.debug "#{params[:latitude]} : #{params[:longitude]}"
 
-=begin
-					dy = params[:latitude].to_f - cont.latitude
-					dx = params[:longitude].to_f - cont.longitude
-					e_2 = 0.00669437999
-					nu_y = (params[:latitude].to_f + cont.latitude)/2
-					w = (1-e_2*Math.sin(nu_y/180*Math::PI)**2)**0.5
-					m = 6335439.32729246/(w**3)
-					n = 6378137.0/w
-=end
+					pow_e = 1 - B**2/A**2
+					ave = ((params[:latitude].to_f + cont.latitude)*Math::PI/180)/2.0
+					dy = (params[:latitude].to_f - cont.latitude)*Math::PI/180
+					dx = (params[:longitude].to_f - cont.longitude)*Math::PI/180
 
-					dy = params[:latitude].to_f*Math::PI*180 - cont.latitude*Math::PI*180
-					dx = params[:longitude].to_f*Math::PI*180 - cont.longitude*Math::PI*180
-					e_2 = 0.00669437999
-					nu_y = (params[:latitude].to_f*Math::PI*180 + cont.latitude*Math::PI*180)/2
-					w = (1-e_2*Math.sin(nu_y/180*Math::PI)**2)**0.5
-					m = 6335439.32729246/(w**3)
-					n = 6378137.0/w
+					sin_ave = Math.sin(ave)
+					cos_ave = Math.cos(ave)
 
-					logger.debug ((dy*m)**2+(dx*n*Math.cos(nu_y/180*Math::PI))**2)**0.5
+					w = Math.sqrt(1-pow_e*sin_ave**2)
+					m = A*(1-pow_e)/w**3
+					n = A/w
 
-					if( ((dy*m)**2+(dx*n*Math.cos(nu_y/180*Math::PI))**2)**0.5 < 500 ) 
+					distance = Math.sqrt((m*dy)**2 + (n*cos_ave*dx)**2)
+
+					logger.debug "#{dy} : #{dx}"
+					logger.debug distance
+
+					if( distance < 500.0 ) 
 						response << {:name => cont.title, :description => cont.description}
 					end
 						

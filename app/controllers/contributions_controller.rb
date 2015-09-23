@@ -13,8 +13,9 @@ class ContributionsController < ApplicationController
 			cont.save
 
 			semi_cont = Semicontribution.new()
-			dx = 5000/6378137.0
-			dy = 5000*0.1113195
+			dx = 600/110956.76863201741
+			dy = 600/90045.41003629414
+			logger.debug "#{dy} : #{dx}"
 			semi_cont.max_lat = params[:latitude].to_f+dy
 			semi_cont.min_lat = params[:latitude].to_f-dy
 			semi_cont.max_lon = params[:longitude].to_f+dx
