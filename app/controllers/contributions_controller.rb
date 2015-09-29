@@ -8,13 +8,14 @@ class ContributionsController < ApplicationController
 			cont.user_id = params[:id]
 			cont.latitude = params[:latitude]
 			cont.longitude = params[:longitude]
-			cont.title =params[:title]
+			cont.title = params[:title]
 			cont.description = params[:description]
+			cont.img = params[:img]
 			cont.save
 
 			semi_cont = Semicontribution.new()
-			dx = 600/110956.76863201741
-			dy = 600/90045.41003629414
+			dx = 400/110956.76863201741
+			dy = 400/90045.41003629414
 			logger.debug "#{dy} : #{dx}"
 			semi_cont.max_lat = params[:latitude].to_f+dy
 			semi_cont.min_lat = params[:latitude].to_f-dy

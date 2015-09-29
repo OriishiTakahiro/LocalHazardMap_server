@@ -17,10 +17,14 @@ class LocationsController < ApplicationController
 			result = Array.new
 			if(!semi_hit.empty?)
 				candidates = Warning.where(:id => semi_hit.map{|semi_warning| semi_warning.id}, :layer_id => Layer.where(:org_id => orgs.map{|org| org if (org != 1)}))
+				user_lat = params[:latitude].to_f
+				user_lon = params[:longitude].to_f
+
 				candidates.map{ |candidate|
 					apexes = JSON.parse(candidate.apexes, :quirks_mode => true)
 					lat_array = apexes.map{|apex| apex.keys.first.to_f}
 					lon_array = apexes.map{|apex| apex.values.first}
+=begin
 					conditions = [false, false] # [指定点より小さい交点があるか, 指定点より大きい交点があるか]
 					user_lat = params[:latitude].to_f
 					user_lon = params[:longitude].to_f
@@ -40,6 +44,20 @@ class LocationsController < ApplicationController
 							end
 						}
 					}
+=end
+
+logger.debug candidate.apexes
+						counter_cross_point = 0
+						0.upto(lat_array.length-2) { |i|
+							(i+1).upto(lat_array.length-1) { |j|
+								slant = (lat_array[i]-lat_array[j])/(lon_array[i]-lon_array[j])
+								cross_y = slant*(user_lon-lon_array[i])+lat_array[i]
+								in_warning = (user_lat < cross_y) and ((lon_array[i] < user_lon and user_lon < lon_array[j]) or (lon_array[j] < user_lon and user_lon < lon_array[i]))
+								counter_cross_point += 1 if(in_warning)
+logger.debug "#{i} : #{j} : #{in_warning}"
+							}
+						}
+						result << candidate.disaster_id if(counter_cross_point%2 != 0)
 				}
 			end
 
@@ -49,7 +67,8 @@ class LocationsController < ApplicationController
 			}
 
 			if(orgs.include?(1))
-				semis = Semicontribution.where("max_lat > #{params[:latitude]} and max_lon > #{params[:longitude]} and min_lat < #{params[:latitude]} and min_lon <  #{params[:longitude]}").map{|semi| semi.id}
+				# semis = Semicontribution.where("max_lat > #{params[:latitude]} and max_lon > #{params[:longitude]} and min_lat < #{params[:latitude]} and min_lon <  #{params[:longitude]}").map{|semi| semi.id}
+				semis = Semicontribution.where("max_lat > #{params[:latitude]} and max_lon > #{params[:longitude]} and min_lat < #{params[:latitude]} and min_lon <  #{params[:longitude]}").to_sql
 				semi_list = Semicontribution.all.map{|semi| semi.id}
 				logger.debug "semilist : #{semis}}"
 				cont_list = Contribution.where(:id => semi_list)
@@ -76,8 +95,8 @@ class LocationsController < ApplicationController
 					logger.debug "#{dy} : #{dx}"
 					logger.debug distance
 
-					if( distance < 500.0 ) 
-						response << {:name => cont.title, :description => cont.description}
+					if( distance < 300.0 ) 
+						response << {:name => cont.title, :description => cont.description, :img => cont.img}
 					end
 						
 				}

@@ -11,6 +11,8 @@ path(HTTP_method) => request
 * organization
 	+ org/getList(get) => none  
 		// {"response":{org_id:org_name}, {org_id:org_name}, {org_id:org_name}, ...}
+	+ org/register(post) => name=org_name & pw=org_pw & description=org_description
+		// {"org_id":org_id, "layer_id":layer_id}
 * disaster
 	+ disaster/getList(get) => none  
 		// [[disaster_id, disaster_name, disaster_description],[disaster_id, disaster_name, disaster_description], ...]
@@ -18,7 +20,7 @@ path(HTTP_method) => request
 	+ contribution/postContribution(post) => id=user_id & pw=user_pw & latitude=user_latitude & longitude=user_longitude & title=title & description=description
 		// ["result":"succeeded","id":contribution_id]
 * layer
-	+ layer/register(post) => name=org_name & pw=org_pw & max_lat=max_lat & max_lon=max_lon & min_lat=min_lat & min_lon=min_lon  
+	+ layer/register(post) => name=org_name & pw=org_pw
 		// ["result":true_or_false, "id":"registerd_layer_id"]
 	+ layer/update(post) => name=hoge & pw=hoge & layer_id=hoge & warnings=["disaster_id",{"lat:lon","lat:lon"},{"lat:lon"}],["disaster_id",{"lat:lon"},{"lat:lon"},{"lat:lon"}],...]  
 		// ["result":true_or_false, "layer_id":layer.id, "warnings":[id,layer_id,disaster_id,apexes,created_date,updated_date]]

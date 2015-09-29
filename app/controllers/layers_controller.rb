@@ -7,7 +7,10 @@ class LayersController < ApplicationController
 		#params => name=org_name & pw=org_pw & max_lat=max_lat & max_lon=max_lon & min_lat=min_lat & min_lon=min_lon
 		org = Organization.find_by(:name => params[:name], :pw => params[:pw])
 		if(org)
-			new_layer = Layer.new(:org_id => org.id, :max_lat => params[:max_lat], :max_lon => params[:max_lon], :min_lat => params[:min_lat], :min_lon => params[:min_lon])
+			new_layer = Layer.new
+			new_layer.org_id = new_org.id
+			new_layer.cener_lat = params[:center_lat] if(params[:cener_lat])
+			new_layer.cener_lon = params[:center_lon] if(params[:cener_lon])
 			if(new_layer.save)
 				render :json => [:result => true, :id => new_layer.id]
 			else

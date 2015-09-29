@@ -6,7 +6,7 @@ class CreateContributions < ActiveRecord::Migration
 			t.decimal :longitude, :precision => 9, :scale => 6, :nul => false
 			t.string :title, :null => false
 			t.text :description
-			t.binary :img
+			t.binary :img, :limit => 10.megabyte
       t.timestamps null: false
     end
   end

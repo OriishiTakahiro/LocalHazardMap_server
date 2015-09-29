@@ -14,14 +14,14 @@
 ActiveRecord::Schema.define(version: 20150918173926) do
 
   create_table "contributions", force: :cascade do |t|
-    t.integer  "user_id",     limit: 4,                             null: false
-    t.decimal  "latitude",                  precision: 9, scale: 6
-    t.decimal  "longitude",                 precision: 9, scale: 6
-    t.string   "title",       limit: 255,                           null: false
+    t.integer  "user_id",     limit: 4,                                null: false
+    t.decimal  "latitude",                     precision: 9, scale: 6
+    t.decimal  "longitude",                    precision: 9, scale: 6
+    t.string   "title",       limit: 255,                              null: false
     t.text     "description", limit: 65535
-    t.binary   "img",         limit: 65535
-    t.datetime "created_at",                                        null: false
-    t.datetime "updated_at",                                        null: false
+    t.binary   "img",         limit: 16777215
+    t.datetime "created_at",                                           null: false
+    t.datetime "updated_at",                                           null: false
   end
 
   create_table "disasters", force: :cascade do |t|
@@ -32,13 +32,11 @@ ActiveRecord::Schema.define(version: 20150918173926) do
   end
 
   create_table "layers", force: :cascade do |t|
-    t.integer  "org_id",     limit: 4,                         null: false
-    t.decimal  "max_lat",              precision: 9, scale: 6
-    t.decimal  "max_lon",              precision: 9, scale: 6
-    t.decimal  "min_lat",              precision: 9, scale: 6
-    t.decimal  "min_lon",              precision: 9, scale: 6
-    t.datetime "created_at",                                   null: false
-    t.datetime "updated_at",                                   null: false
+    t.integer  "org_id",     limit: 4,                                              null: false
+    t.decimal  "center_lat",           precision: 9, scale: 6, default: 35.685075
+    t.decimal  "center_lon",           precision: 9, scale: 6, default: 139.752762
+    t.datetime "created_at",                                                        null: false
+    t.datetime "updated_at",                                                        null: false
   end
 
   create_table "locations", force: :cascade do |t|
