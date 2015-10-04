@@ -14,14 +14,15 @@
 ActiveRecord::Schema.define(version: 20150918173926) do
 
   create_table "contributions", force: :cascade do |t|
-    t.integer  "user_id",     limit: 4,                                null: false
+    t.integer  "user_id",     limit: 4,                                            null: false
+    t.integer  "risk_level",  limit: 4,                                default: 0, null: false
     t.decimal  "latitude",                     precision: 9, scale: 6
     t.decimal  "longitude",                    precision: 9, scale: 6
-    t.string   "title",       limit: 255,                              null: false
+    t.string   "title",       limit: 255,                                          null: false
     t.text     "description", limit: 65535
     t.binary   "img",         limit: 16777215
-    t.datetime "created_at",                                           null: false
-    t.datetime "updated_at",                                           null: false
+    t.datetime "created_at",                                                       null: false
+    t.datetime "updated_at",                                                       null: false
   end
 
   create_table "disasters", force: :cascade do |t|
@@ -50,6 +51,7 @@ ActiveRecord::Schema.define(version: 20150918173926) do
   create_table "organizations", force: :cascade do |t|
     t.string   "name",        limit: 255, null: false
     t.string   "pw",          limit: 20,  null: false
+    t.integer  "rank",        limit: 4,   null: false
     t.text     "description", limit: 255, null: false
     t.datetime "created_at",              null: false
     t.datetime "updated_at",              null: false
@@ -90,11 +92,12 @@ ActiveRecord::Schema.define(version: 20150918173926) do
   end
 
   create_table "warnings", force: :cascade do |t|
-    t.integer  "layer_id",    limit: 4,   null: false
-    t.integer  "disaster_id", limit: 4,   null: false
-    t.string   "apexes",      limit: 255, null: false
-    t.datetime "created_at",              null: false
-    t.datetime "updated_at",              null: false
+    t.integer  "layer_id",    limit: 4,               null: false
+    t.integer  "disaster_id", limit: 4,               null: false
+    t.integer  "risk_level",  limit: 4,   default: 1, null: false
+    t.string   "apexes",      limit: 255,             null: false
+    t.datetime "created_at",                          null: false
+    t.datetime "updated_at",                          null: false
   end
 
 end

@@ -31,14 +31,23 @@ class LayersController < ApplicationController
 			old_warnings.delete_all
 			old_semi_warnings.delete_all
 			###
+			
 			warnings = JSON.parse(params[:warnings], :quirks_mode => true)
 			# save each warning
 			new_warning = nil
 			0.upto(warnings.length-1) do |i|
-				apexes = warnings[i].each.with_index.map{|info, j| info if j != 0}.compact
-				lat_array = apexes.map{|apex| apex.keys[0]}
-				lon_array = apexes.map{|apex| apex.values[0]}
-				new_warning = Warning.create(:layer_id => params[:layer_id], :disaster_id => warnings[i][0], :apexes => JSON.generate(apexes))
+
+				apexes = warnings[i].each.with_index.map{|info, j| info if j > 1}.compact
+				lat_array = apexes.map{|apexe| apexe.keys[0]}
+				lon_array = apexes.map{|apexe| apexe.values[0]}
+
+				new_warning = Warning.new
+				new_warning.layer_id = params[:layer_id]
+				new_warning.disaster_id = warnings[i][0]
+				new_warning.apexes = JSON.generate(apexes)
+				new_warning.risk_level = warnings[i][1]
+				new_warning.save
+
 				Semiwarning.create(:id => new_warning.id, :max_lat => lat_array.max, :max_lon => lon_array.max, :min_lat => lat_array.min, :min_lon => lon_array.min)
 			end
 			###
@@ -50,11 +59,11 @@ class LayersController < ApplicationController
 
 ### --------------------------------
 	def getMap
-		# params => request=["org_id", "org_id",...]
-		orgs = JSON.parse(params[:request], :quirks_mode => true)
+		rank_list = JSON.parse(params[:request], :quirks_mode => true)
+		orgs = Organization.where(:rank => rank_list)
 		layers = Layer.where(:org_id => orgs)
 		warnings = Warning.where(:layer_id => layers.map{|layer| layer.id}).map{|warning| [warning.disaster_id, JSON.parse(warning.apexes, :quirks_mode => true)] if warning}
-		if(orgs.include?(1))
+		if(rank_list.include?(1))
 			Contribution.all.each{|cont| warnings << [0, [cont.latitude.to_s => cont.longitude.to_f]]}
 		end
 		warnings.each{ |polygon|

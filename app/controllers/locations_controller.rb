@@ -7,76 +7,40 @@ class LocationsController < ApplicationController
 
 	def postLocation
 		# params => id=user_id & pw=user_pw & latitude=user_latitude & longitude=user_longitude
-		user = nil
-		if(user = User.find_by(:id => params[:id], :pw => params[:pw]) && params[:orgs]!="")
-			orgs = JSON.parse(params[:orgs])
-			#location = Location.find_or_create_by(:user_id => user.id)
-			#location.update(:latitude => params[:latitude], :longitude => params[:longitude])
+		user = User.find_by(:id => params[:id], :pw => params[:pw])
+		if(user && params[:orgs]!="")
+			ranks = JSON.parse(params[:rank])
+			location = Location.find_or_create_by(:user_id => user.id)
+			location.update(:latitude => params[:latitude], :longitude => params[:longitude])
 			# 範囲指定でSemiwarningを取得
-			semi_hit = Semiwarning.where("max_lat > #{params[:latitude]} and max_lon > #{params[:longitude]} and min_lat < #{params[:latitude]} and min_lon <  #{params[:longitude]}")
+			#semi_hit = Semiwarning.where("max_lat > #{params[:latitude]} and max_lon > #{params[:longitude]} and min_lat < #{params[:latitude]} and min_lon <  #{params[:longitude]}")
+			semi_hit = Semiwarning.all
 			result = Array.new
+			logger.debug semi_hit.empty?
+
 			if(!semi_hit.empty?)
-				candidates = Warning.where(:id => semi_hit.map{|semi_warning| semi_warning.id}, :layer_id => Layer.where(:org_id => orgs.map{|org| org if (org != 1)}))
+				candidates = Warning.where(:id => semi_hit.map{|semi_warning| semi_warning.id}, :layer_id => Layer.where(:org_id => Organization.where(:rank => ranks).map{|org| org.id if (org != 1)}).map{|layer| layer.id}, :risk_level => params[:risk_level].to_i()..6)
 				user_lat = params[:latitude].to_f
 				user_lon = params[:longitude].to_f
-
 				candidates.map{ |candidate|
-					apexes = JSON.parse(candidate.apexes, :quirks_mode => true)
-					lat_array = apexes.map{|apex| apex.keys.first.to_f}
-					lon_array = apexes.map{|apex| apex.values.first}
-=begin
-					conditions = [false, false] # [指定点より小さい交点があるか, 指定点より大きい交点があるか]
-					user_lat = params[:latitude].to_f
-					user_lon = params[:longitude].to_f
-					# 各辺とy=params[:latitude]の交点を求め, その交点の経度がリクエスト座標よりも大きい点, 小さい点を発見すればその警報の範囲内にいる
-					0.upto(apexes.length-1) { |i|
-						i.upto(apexes.length-1) { |j|
-							if((lat_array[i] < user_lat && lat_array[j] > user_lat) || (lat_array[j] < user_lat && lat_array[i] > user_lat))
-								slant = (lat_array[i]-lat_array[j])/(lon_array[i]-lon_array[j])
-								x = (slant*lon_array[i]-lat_array[i]+user_lat)/slant
-								logger.debug "#{x} : #{slant}"
-								conditions[0] = x < user_lon ? true : conditions[0]
-								conditions[1] = x > user_lon ? true : conditions[1]
-								if(conditions[0]&&conditions[1])
-									result << candidate.disaster_id
-									break
-								end
-							end
-						}
-					}
-=end
-
-logger.debug candidate.apexes
-						counter_cross_point = 0
-						0.upto(lat_array.length-2) { |i|
-							(i+1).upto(lat_array.length-1) { |j|
-								slant = (lat_array[i]-lat_array[j])/(lon_array[i]-lon_array[j])
-								cross_y = slant*(user_lon-lon_array[i])+lat_array[i]
-								in_warning = (user_lat < cross_y) and ((lon_array[i] < user_lon and user_lon < lon_array[j]) or (lon_array[j] < user_lon and user_lon < lon_array[i]))
-								counter_cross_point += 1 if(in_warning)
-logger.debug "#{i} : #{j} : #{in_warning}"
-							}
-						}
-						result << candidate.disaster_id if(counter_cross_point%2 != 0)
+					if(checkRegion(user_lat, user_lon, candidate))
+						result << candidate
+					end
 				}
 			end
 
-			response = result.uniq.map{|warning_id| 
-				disaster = Disaster.find_by(:id => warning_id)
-				{:name => disaster.name, :description => disaster.description}
+			response = result.uniq.map{|warning| 
+				disaster = Disaster.find_by(:id => warning.disaster_id)
+				{:name => disaster.name, :description => disaster.description, :risk_level => warning.risk_level, :org => Organization.find_by(:id => Layer.find_by(:id => warning.layer_id).org_id).name}
 			}
 
-			if(orgs.include?(1))
+			if(ranks.include?(1))
 				# semis = Semicontribution.where("max_lat > #{params[:latitude]} and max_lon > #{params[:longitude]} and min_lat < #{params[:latitude]} and min_lon <  #{params[:longitude]}").map{|semi| semi.id}
-				semis = Semicontribution.where("max_lat > #{params[:latitude]} and max_lon > #{params[:longitude]} and min_lat < #{params[:latitude]} and min_lon <  #{params[:longitude]}").to_sql
 				semi_list = Semicontribution.all.map{|semi| semi.id}
-				logger.debug "semilist : #{semis}}"
-				cont_list = Contribution.where(:id => semi_list)
+				cont_list = Contribution.where(:id => semi_list, :risk_level => (params[:risk_level].to_i()..6))
 				cont_list.each { |cont|
 
 					# Hubeny's formula
-					logger.debug "#{cont.latitude} : #{cont.longitude}"
-					logger.debug "#{params[:latitude]} : #{params[:longitude]}"
 
 					pow_e = 1 - B**2/A**2
 					ave = ((params[:latitude].to_f + cont.latitude)*Math::PI/180)/2.0
@@ -95,12 +59,13 @@ logger.debug "#{i} : #{j} : #{in_warning}"
 					logger.debug "#{dy} : #{dx}"
 					logger.debug distance
 
-					if( distance < 300.0 ) 
-						response << {:name => cont.title, :description => cont.description, :img => cont.img}
+					if( distance < 100.0 ) 
+						response << {:name => cont.title, :description => cont.description, :risk_level => cont.risk_level, :img => cont.img.force_encoding("UTF-8"), :org => "ユーザ"}
 					end
 						
 				}
 			end
+			logger.debug response
 			render :json => {:response => response}
 		else
 			render :json => {:result => 'failed'}
@@ -108,3 +73,23 @@ logger.debug "#{i} : #{j} : #{in_warning}"
 	end
 
 end
+
+# reference site http://markmail.org/message/wf7xkoxzkeyfoeo3
+def checkRegion(uy, ux, candidate)
+
+	apexes = JSON.parse(candidate.apexes, :quirks_mode => true)
+	py = (apexes.map{|apexe| apexe.keys.first.to_f} << apexes.first.keys.first.to_f)
+	px = (apexes.map{|apexe| apexe.values.first} << apexes.first.values.first)
+	logger.debug "#{ux.class} : #{uy.class}"
+	counter = 0
+
+	0.upto(px.length-2) { |i|
+		if((ux - px[i])*(ux - px[i+1]) < 0)
+			m = (ux - px[i])*( (ux - px[i])*(py[i+1] - py[i]) - (uy - py[i])*(px[i+1] - px[i]) )
+			counter += 1 if(m < 0)
+		end
+	}
+	logger.debug counter
+	counter.odd?
+end
+
