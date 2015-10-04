@@ -19,6 +19,8 @@ path(HTTP_method) => request
 * contribution
 	+ contribution/postContribution(post) => id=user_id & pw=user_pw & latitude=user_latitude & longitude=user_longitude & title=title & description=description
 		// ["result":"succeeded","id":contribution_id]
+	+ contribution/enableContribution(post) => name=org_name & pw=org_name & id=contribution_id & risk_level=new_level
+		//""
 * layer
 	+ layer/register(post) => name=org_name & pw=org_pw
 		// ["result":true_or_false, "id":"registerd_layer_id"]

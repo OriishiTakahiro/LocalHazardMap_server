@@ -65,7 +65,6 @@ class LocationsController < ApplicationController
 						
 				}
 			end
-			logger.debug response
 			render :json => {:response => response}
 		else
 			render :json => {:result => 'failed'}
@@ -92,4 +91,3 @@ def checkRegion(uy, ux, candidate)
 	logger.debug counter
 	counter.odd?
 end
-

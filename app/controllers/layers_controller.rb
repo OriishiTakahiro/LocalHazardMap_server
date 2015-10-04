@@ -64,7 +64,7 @@ class LayersController < ApplicationController
 		layers = Layer.where(:org_id => orgs)
 		warnings = Warning.where(:layer_id => layers.map{|layer| layer.id}).map{|warning| [warning.disaster_id, JSON.parse(warning.apexes, :quirks_mode => true)] if warning}
 		if(rank_list.include?(1))
-			Contribution.all.each{|cont| warnings << [0, [cont.latitude.to_s => cont.longitude.to_f]]}
+			Contribution.where("risk_level > 0").each{|cont| warnings << [cont.id , [cont.latitude.to_s => cont.longitude.to_f]]}
 		end
 		warnings.each{ |polygon|
 			logger.debug polygon

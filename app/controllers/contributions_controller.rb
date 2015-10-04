@@ -30,6 +30,15 @@ class ContributionsController < ApplicationController
 
 	end
 
+	def enableContribution
+		if(Organization.find_by(:name => params[:name], :pw => params[:pw]))
+			Contribution.find_by(:id => params[:id]).update(:risk_level => params[:risk_level])
+			render :json => ""
+		else
+			render :json => "request failed"
+		end
+	end
+
 	def tmp
 			1.upto(Contribution.all.length-Semicontribution.all.length) do |i|
 				semi_cont = Semicontribution.new()
