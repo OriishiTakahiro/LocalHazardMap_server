@@ -2,7 +2,15 @@ class DisastersController < ApplicationController
   before_action :set_disaster, only: [:show, :edit, :update, :destroy]
 
 	def getList
-		render :json => Disaster.all.map{|disaster| [disaster.id, disaster.name, disaster.description]}
+		render :json => {:list => Disaster.all.map{|disaster| [disaster.id, disaster.name, disaster.description]}}
+	end
+
+	def register
+		dis = Disaster.new
+		dis.name = params[:name]
+		dis.description = params[:description]
+		dis.save
+		render :json => {:id => dis.id}
 	end
 
   # GET /disasters

@@ -12,7 +12,7 @@ class OrganizationsController < ApplicationController
 		new_org.name = params[:name]
 		new_org.pw = params[:pw]
 		new_org.description = params[:description]
-		new_org.rank = param[:rank]
+		new_org.rank = params[:rank]
 		new_org.save
 
 		new_layer = Layer.new

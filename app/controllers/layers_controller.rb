@@ -37,7 +37,7 @@ class LayersController < ApplicationController
 			new_warning = nil
 			0.upto(warnings.length-1) do |i|
 
-				apexes = warnings[i].each.with_index.map{|info, j| info if j > 1}.compact
+				apexes = warnings[i][2]
 				lat_array = apexes.map{|apexe| apexe.keys[0]}
 				lon_array = apexes.map{|apexe| apexe.values[0]}
 
@@ -61,11 +61,24 @@ class LayersController < ApplicationController
 	def getMap
 		rank_list = JSON.parse(params[:request], :quirks_mode => true)
 		orgs = Organization.where(:rank => rank_list)
-		layers = Layer.where(:org_id => orgs)
-		warnings = Warning.where(:layer_id => layers.map{|layer| layer.id}).map{|warning| [warning.disaster_id, JSON.parse(warning.apexes, :quirks_mode => true)] if warning}
-		if(rank_list.include?(1))
-			Contribution.where("risk_level > 0").each{|cont| warnings << [cont.id , [cont.latitude.to_s => cont.longitude.to_f]]}
+		layers = Layer.where(:org_id => orgs) 
+		if(params[:by_org])
+			warnings = Warning.where(:layer_id => layers.map{|layer| layer.id}).map{|warning| [warning.disaster_id, warning.risk_level, Organization.find_by(:id => Organization.find_by(:id => Layer.find_by(:id => warning.layer_id).org_id)).name, JSON.parse(warning.apexes, :quirks_mode => true)] if warning}
+		else 
+			warnings = Warning.where(:layer_id => layers.map{|layer| layer.id}).map{|warning| [warning.disaster_id, JSON.parse(warning.apexes, :quirks_mode => true)] if warning}
 		end
+		if(rank_list.include?(1))
+			Contribution.where("risk_level > 0").each{|cont| warnings << [cont.id*(-1) , [cont.latitude.to_s => cont.longitude.to_f]]}
+		end
+		warnings.each{ |polygon|
+			logger.debug polygon
+		}
+		render :json => {:response => warnings}
+	end
+
+	def getMapByOrg
+		layers = Layer.where(:id => params[:layer_id])
+		warnings = Warning.where(:layer_id => layers.map{|layer| layer.id}).map{|warning| [warning.disaster_id, warning.risk_level,  JSON.parse(warning.apexes, :quirks_mode => true)] if warning}
 		warnings.each{ |polygon|
 			logger.debug polygon
 		}

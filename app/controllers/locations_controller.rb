@@ -31,7 +31,7 @@ class LocationsController < ApplicationController
 
 			response = result.uniq.map{|warning| 
 				disaster = Disaster.find_by(:id => warning.disaster_id)
-				{:name => disaster.name, :description => disaster.description, :risk_level => warning.risk_level, :org => Organization.find_by(:id => Layer.find_by(:id => warning.layer_id).org_id).name}
+				{:name => disaster.name, :description => disaster.description, :risk_level => warning.risk_level, :org => Organization.find_by(:id => Layer.find_by(:id => warning.layer_id).org_id).name, :posted_date => warning.created_at}
 			}
 
 			if(ranks.include?(1))
@@ -60,7 +60,7 @@ class LocationsController < ApplicationController
 					logger.debug distance
 
 					if( distance < 100.0 ) 
-						response << {:name => cont.title, :description => cont.description, :risk_level => cont.risk_level, :img => cont.img.force_encoding("UTF-8"), :org => "ユーザ"}
+						response << {:name => cont.title, :description => cont.description, :risk_level => cont.risk_level, :img => cont.img.force_encoding("UTF-8"), :org => "ユーザ", :posted_date => cont.created_at}
 					end
 						
 				}

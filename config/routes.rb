@@ -11,14 +11,17 @@ Rails.application.routes.draw do
 	post '/org/register' => 'organizations#registerOrg'
 
 	get 'disaster/getList' => 'disasters#getList'
+	post 'disaster/register' => 'disasters#register'
 
 	post 'contribution/postContribution' => 'contributions#postContribution'
 	post 'contribution/enableContribution' => 'contributions#enableContribution'
+	get 'contribution/reset' => 'contributions#reset'
 	get 'tmp' => 'contributions#tmp'
 
 	post '/layer/register' => 'layers#registerNewLayer'
 	post '/layer/update' => 'layers#updateLayer'
 	get '/layer/getMap' => 'layers#getMap'
+	get '/layer/getMapByOrg' => 'layers#getMapByOrg'
 
 	post '/location/postLocation' => 'locations#postLocation'
 

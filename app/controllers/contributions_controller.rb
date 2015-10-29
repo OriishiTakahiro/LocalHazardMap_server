@@ -9,6 +9,7 @@ class ContributionsController < ApplicationController
 			cont.latitude = params[:latitude]
 			cont.longitude = params[:longitude]
 			cont.title = params[:title]
+			cont.risk_level = 1
 			cont.description = params[:description]
 			cont.img = params[:img]
 			cont.save
@@ -49,6 +50,12 @@ class ContributionsController < ApplicationController
 				semi_cont.save
 			end
 			render :json => Contribution.all.map{|cont| cont.id}+Semicontribution.all.map{|semi| semi.id}
+	end
+
+	def reset
+		Contribution.destroy_all
+		Semicontribution.destroy_all
+		render :json => {:message => "all_delete"}
 	end
 
 end

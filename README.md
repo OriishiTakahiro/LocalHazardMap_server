@@ -24,7 +24,7 @@ path(HTTP_method) => request
 * layer
 	+ layer/register(post) => name=org_name & pw=org_pw
 		// ["result":true_or_false, "id":"registerd_layer_id"]
-	+ layer/update(post) => name=hoge & pw=hoge & layer_id=hoge & warnings=["disaster_id",{"lat:lon","lat:lon"},{"lat:lon"}],["disaster_id",{"lat:lon"},{"lat:lon"},{"lat:lon"}],...]  
+	+ layer/update(post) => name=hoge & pw=hoge & layer_id=hoge & warnings=[disaster_id,risk_level,{"lat:lon","lat:lon"},{"lat:lon"}],[disaster_id,risk_level,{"lat:lon"},{"lat:lon"},{"lat:lon"}],...]  
 		// ["result":true_or_false, "layer_id":layer.id, "warnings":[id,layer_id,disaster_id,apexes,created_date,updated_date]]
 	+ layer/getMap(get) =>	request=["risk_rank", "risk_rank",...]  
 		// {"response":[[disaster_id,[{"latitude":longitude},{"latitude":longitude},{"latitude":longitude}, ...]] ...]}
